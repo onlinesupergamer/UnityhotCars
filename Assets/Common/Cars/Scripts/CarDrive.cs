@@ -378,135 +378,59 @@ public class WheelCast : MonoBehaviour
 
 
         for(int i = 0; i <= rays.Length; i++)
+        {
+            if(i == 0)
             {
-               if(i == 0)
-               {
+                Vector3 groundedLoc = Vector3.zero;
+                Vector3 inAirLoc = Vector3.zero;
 
-                Vector3 newPos = new Vector3(FLWheelPivot.localPosition.x, -m_hit[i].distance + frontOffset, FLWheelPivot.localPosition.z);
 
                 if(b_hasHit[i])
                 {
-                    
-                   
-                    FLWheelPivot.localPosition = newPos;
+
+                    groundedLoc.x = FLWheelPivot.localPosition.x;
+                    groundedLoc.y = -m_hit[i].distance + frontOffset;
+                    groundedLoc.z = FLWheelPivot.localPosition.z;
+
+                    FLWheelPivot.localPosition = groundedLoc;
                 }
-                else if(!b_hasHit[i])
+
+                if(!b_hasHit[i])
                 {
-                    //This is when the wheel is actually in the air
+                    inAirLoc.x = FLWheelPivot.localPosition.x;
+                    inAirLoc.y = -rayLength + frontOffset;
+                    inAirLoc.z = FLWheelPivot.localPosition.z;
 
-                    
-                    FLWheelPivot.localPosition = new Vector3(FLWheelPivot.localPosition.x, -rayLength + frontOffset, FLWheelPivot.localPosition.z);
-                }
-
-
-                if(b_isBoosting)
-                {
-                    Vector3 newVec = Vector3.zero;
-                    
-
-                    
-
-                      
-                    newVec.x = -0.42f;
-                    newVec.y = 0.85f;
-                    newVec.z = 0.749f;
-
-                    FLWheelPivot.localPosition = newVec;
-                    FLWheelPivot.localRotation = Quaternion.Euler(FLWheelPivot.localRotation.x, FLWheelPivot.localRotation.y, 15f);
-                    
-                }
-
-                else if(!b_isBoosting)
-                {
-                    Vector3 newVec = Vector3.zero;
-                    
-
-                    
-
-                      
-                    newVec.x = -0.42f;
-                    newVec.y = newPos.y;
-                    newVec.z = 0.983f;
-
-                    FLWheelPivot.localPosition = newVec;
-                    FLWheelPivot.localRotation = Quaternion.Euler(FLWheelPivot.localRotation.x, FLWheelPivot.localRotation.y, 0);
+                    FLWheelPivot.localPosition = inAirLoc;
 
                 }
-  
-               }
-
-
-
-               if(i == 1)
-               {
-
-                if(b_hasHit[i])
-                {
-                    Vector3 newPos = new Vector3(FRWheel.localPosition.x, -m_hit[i].distance + frontOffset, FRWheel.localPosition.z);
-
-                    FRWheel.localPosition = newPos;
-                }
-                else
-                {
-                    FRWheel.localPosition = new Vector3(FRWheel.localPosition.x, -rayLength + frontOffset, FRWheel.localPosition.z);
-                }
-
-
-
-               }
-
-               if(i == 2)
-               {
-
-                if(b_hasHit[i])
-                {
-                    Vector3 newPos = new Vector3(RLWheel.localPosition.x, -m_hit[i].distance + rearOffset, RLWheel.localPosition.z);
-
-                    RLWheel.localPosition = newPos;
-                }
-                else
-                {
-                    RLWheel.localPosition = new Vector3(RLWheel.localPosition.x, -rayLength + rearOffset, RLWheel.localPosition.z);
-                }
-
-
-
-               }
-
-               if(i == 3)
-               {
-
-                if(b_hasHit[i])
-                {
-                    Vector3 newPos = new Vector3(RRWheel.localPosition.x, -m_hit[i].distance + rearOffset, RRWheel.localPosition.z);
-
-                    RRWheel.localPosition = newPos;
-                }
-                else
-                {
-                    RRWheel.localPosition = new Vector3(RRWheel.localPosition.x, -rayLength + rearOffset, RRWheel.localPosition.z);
-                }
-
-
-
-               }
-
-               FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
 
                 
+
+
+
+
+
+
+            }
+
                
-            }
 
-            if(Input.GetKeyDown(KeyCode.G))
-            {
-                Time.timeScale = 0.0f;
-                Time.fixedDeltaTime = Time.timeScale * 0.02f;
-            }
+               FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+ 
+               
+        }
 
-             if(Input.GetKeyDown(KeyCode.H))
-            {
-                Time.timeScale = 1f;
-            }
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            Time.timeScale = 0.0f;
+            Time.fixedDeltaTime = Time.timeScale * 0.02f;
+        }
+
+            if(Input.GetKeyDown(KeyCode.H))
+        {
+            Time.timeScale = 1f;
+        }
             
 
     }
