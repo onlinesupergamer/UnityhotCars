@@ -13,10 +13,11 @@ public class WheelCast : MonoBehaviour
     public Transform[] rays;
     public Transform[] frontWheels;
     public Transform[] rearWheels;
+    public Transform liftPoint;
 
 
 
-    Rigidbody rb;
+    public Rigidbody rb;
     public Transform chassisModel;
     public float suspensionRestDistance;
     public float springStrength;
@@ -114,20 +115,6 @@ public class WheelCast : MonoBehaviour
                 groundHit[i] = m_hit[i];
                 rb.AddForceAtPosition(springDir * Force, rays[i].position);
 
-                
-
-
-
-                
-                //Friction
-                Vector3 steeringDir = rays[i].right;
-                
-                float steeringVel = Vector3.Dot(steeringDir, tireWorldVel);
-                float desiredVelChange = -steeringVel * tireGripFactor;
-                float desiredAccel = desiredVelChange / Time.fixedDeltaTime;
-
-
-                //rb.AddForceAtPosition(steeringDir * desiredAccel, ray.position);
 
 
                 b_Isgrounded = true;
@@ -261,15 +248,37 @@ public class WheelCast : MonoBehaviour
     {
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-        float rollAmount = 10f;
-        float pitchAmount = 2.5f;
+        float rollAmount = 6f;
+        float pitchAmount = 1f;
+        float boostPitchAmount = 8f;
+        float boostRollAmount = 2.5f;
 
-        Quaternion rollRotation = transform.rotation * Quaternion.Euler(-y * pitchAmount, 0f, -rollAmount * (x * normSpeed));
-
-        chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, rollRotation, Time.fixedDeltaTime * 3.5f);
-
+        var tmpbffr = rb.transform.localPosition;
 
         
+        if(b_isBoosting && b_Isgrounded)
+        {
+            
+            Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
+            
+            
+
+
+            
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, 0.5f);
+
+
+
+        }
+        else if(!b_isBoosting || !b_Isgrounded)
+        {
+
+            Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
+
+            
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, 0.5f);
+
+        }
 
 
 
@@ -408,7 +417,7 @@ public class WheelCast : MonoBehaviour
 
             if(Input.GetKeyDown(KeyCode.G))
             {
-                Time.timeScale = 0f;
+                Time.timeScale = 0.2f;
                 Time.fixedDeltaTime = Time.timeScale * 0.02f;
             }
 
@@ -424,7 +433,7 @@ public class WheelCast : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.LeftShift))
         {
-            
+ 
             Vector3 BoostVel = rb.transform.forward * topSpeed;
             Vector3 velChange = BoostVel - rb.velocity; //What the hell is this math
             Vector3 accel = velChange / Time.fixedDeltaTime;
@@ -433,12 +442,12 @@ public class WheelCast : MonoBehaviour
             if(b_Isgrounded)
             {
                 
+
                 rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
+
+                b_isBoosting = true;
             }
 
-
-            b_isBoosting = true;
-   
             
             //This needs to set the current velocity to the max speed
             
