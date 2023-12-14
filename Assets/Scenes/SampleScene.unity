@@ -194,8 +194,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 218617392}
   serializedVersion: 2
-  m_LocalRotation: {x: 1.6956006e-16, y: 0.99890983, z: -0.04668205, w: 5.94438e-16}
-  m_LocalPosition: {x: -245.5, y: 3.6599998, z: -730.172}
+  m_LocalRotation: {x: 0.032172464, y: 0.7238011, z: -0.033825573, w: 0.68842775}
+  m_LocalPosition: {x: 319.78348, y: -14.04, z: -1526.1619}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -432,6 +432,37 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &434215488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 434215489}
+  m_Layer: 6
+  m_Name: LiftPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &434215489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434215488}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0.213, z: 1.057}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2236134396456536871}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &592811202 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 48dcc506f0bf9fa4cbccd787d5828a6b,
@@ -475,7 +506,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 641122827}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PivotRef
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1066,8 +1097,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1612007670}
   serializedVersion: 2
-  m_LocalRotation: {x: 1.6956006e-16, y: 0.99890983, z: -0.04668205, w: 5.94438e-16}
-  m_LocalPosition: {x: -245.5, y: 3.6599998, z: -730.172}
+  m_LocalRotation: {x: 0.032172464, y: 0.7238011, z: -0.033825573, w: 0.68842775}
+  m_LocalPosition: {x: 319.78348, y: -14.04, z: -1526.1619}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1283,6 +1314,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: WheelModelFR
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233112405309087440, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821623529969584324, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1351,6 +1397,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: WheelModelFL
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233112405309087440, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821623529969584324, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1365,7 +1426,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7946299157638433756}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ray (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1455,6 +1516,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Model
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 48dcc506f0bf9fa4cbccd787d5828a6b,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1487,7 +1553,7 @@ MonoBehaviour:
   rearWheels:
   - {fileID: 7946299157638433756}
   - {fileID: 8736422343834189089}
-  liftPoint: {fileID: 0}
+  liftPoint: {fileID: 434215489}
   rb: {fileID: 5084783792532174473}
   chassisModel: {fileID: 641122827}
   suspensionRestDistance: 0.45
@@ -1598,6 +1664,9 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   topSpeed: 45
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 1
   Speed: 0
   b_isSlipping: 0
   b_isDrifting: 0
@@ -1688,6 +1757,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: WheelModelRR
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233112405309087440, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821623529969584324, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1702,7 +1786,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3406581640883224723}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ray (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1720,7 +1804,7 @@ GameObject:
   - component: {fileID: 2236134396456536871}
   - component: {fileID: 5084783792532174473}
   - component: {fileID: 605573159527902534}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: RivitedRayCast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1736,7 +1820,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8736422343834189089}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ray (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1751,20 +1835,21 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2041621752925965384}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.0000002533197}
-  m_LocalPosition: {x: -245.5, y: 2.86, z: -732.932}
+  m_LocalRotation: {x: -0, y: 0.7245856, z: -0, w: 0.68918484}
+  m_LocalPosition: {x: 322.54, y: -14.84, z: -1526.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8731276160299001079}
+  - {fileID: 3406581640883224723}
   - {fileID: 8736422343834189089}
   - {fileID: 7946299157638433756}
-  - {fileID: 3406581640883224723}
-  - {fileID: 8731276160299001079}
   - {fileID: 641122827}
   - {fileID: 7551904411808888792}
   - {fileID: 4905948322348320820}
+  - {fileID: 434215489}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 92.869, z: 0}
 --- !u!114 &2304823163792516211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1797,7 +1882,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8731276160299001079}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1815,7 +1900,7 @@ GameObject:
   - component: {fileID: 7551904411808888792}
   - component: {fileID: 9198279824942047399}
   - component: {fileID: 7730365507091861595}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1962,6 +2047,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: WheelModelRL
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5233112405309087440, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821623529969584324, guid: 81ef6900075629d47b03b84385ae6f28,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1976,7 +2076,7 @@ Transform:
   m_GameObject: {fileID: 1357875216895055070}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.46000624, y: 0.07999992, z: 0.95001245}
+  m_LocalPosition: {x: 0.4599871, y: 0.07999992, z: 0.95002407}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1994,7 +2094,7 @@ GameObject:
   - component: {fileID: 4905948322348320820}
   - component: {fileID: 2885552716298513110}
   - component: {fileID: 2304823163792516211}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Spot Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2106,7 +2206,7 @@ Transform:
   m_GameObject: {fileID: 2685771482466676937}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.4600072, y: 0.07999992, z: 0.95001197}
+  m_LocalPosition: {x: -0.4599879, y: 0.07999992, z: 0.9500011}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

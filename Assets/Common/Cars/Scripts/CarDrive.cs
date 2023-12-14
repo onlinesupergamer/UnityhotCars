@@ -14,6 +14,7 @@ public class WheelCast : MonoBehaviour
     public Transform[] frontWheels;
     public Transform[] rearWheels;
     public Transform liftPoint;
+    
 
 
     
@@ -27,6 +28,7 @@ public class WheelCast : MonoBehaviour
     public AnimationCurve driveTorque;
     public AnimationCurve slipCurve;
     public float topSpeed;
+    public LayerMask groundMask;
 
 
     [Header("Debug")]
@@ -92,14 +94,14 @@ public class WheelCast : MonoBehaviour
         for(int i = 0; i < rays.Length; i++)
         {
             
+            
 
-
-            if(Physics.Raycast(rays[i].transform.position, -rays[i].transform.up, out m_hit[i], rayLength))
+            if(Physics.Raycast(rays[i].transform.position, -rays[i].transform.up, out m_hit[i], rayLength, groundMask))
             {
                 
 
                 //Suspension
-                Vector3 springDir = transform.up;
+                Vector3 springDir = rays[i].up;
                 Vector3 tireWorldVel = rb.GetPointVelocity(rays[i].position);
                 float offset = suspensionRestDistance - m_hit[i].distance;
                 float Vel = Vector3.Dot(springDir, tireWorldVel);
@@ -110,10 +112,10 @@ public class WheelCast : MonoBehaviour
                 rb.AddForceAtPosition(springDir * Force, rays[i].position);
 
 
-
                 b_Isgrounded = true;
                 b_hasHit[i] = true;
 
+                
             
             }
 
@@ -125,6 +127,10 @@ public class WheelCast : MonoBehaviour
             }
 
             Debug.DrawRay(rays[i].position, -rays[i].up * rayLength);
+
+            
+
+            
 
             
         }
@@ -258,9 +264,25 @@ public class WheelCast : MonoBehaviour
             Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
             
-           
+            
             
             chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 5);
+
+            for(int i = 0; i < rays.Length; i++)
+            {
+                if(i == 0)
+                {
+                    Vector3 RotVec = Vector3.zero;
+
+                    RotVec.x = rays[i].localPosition.x;
+                    RotVec.y = 1.15f;
+                    RotVec.z = rays[i].localPosition.z;
+
+                    rays[i].localPosition =  RotVec;
+                }
+            }
+            
+            
 
             
         }
@@ -414,7 +436,7 @@ public class WheelCast : MonoBehaviour
 
             if(Input.GetKeyDown(KeyCode.G))
             {
-                Time.timeScale = 0f;
+                Time.timeScale = 0.0f;
                 Time.fixedDeltaTime = Time.timeScale * 0.02f;
             }
 
