@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -82,6 +83,8 @@ public class WheelCast : MonoBehaviour
     RaycastHit[] groundHit = new RaycastHit[4];
     bool[] b_hasHit = new bool[4];
     int _i;
+
+    
 
 
 
@@ -374,41 +377,62 @@ public class WheelCast : MonoBehaviour
     void HandleWheelAnimations()
     {
 
-        
+        Vector3[] tmpbffr = new Vector3[4];
 
 
         for(int i = 0; i <= rays.Length; i++)
         {
+            
+            
+
             if(i == 0)
             {
+                tmpbffr[i] = FLWheelPivot.localPosition;
+                    
+
                 Vector3 groundedLoc = Vector3.zero;
                 Vector3 inAirLoc = Vector3.zero;
+                Vector3 boostingLoc = Vector3.zero;
+                Vector3 smoothVel = Vector3.zero;
 
 
-                if(b_hasHit[i])
+                if(b_hasHit[i] && !b_isBoosting)
                 {
+                    
+                    tmpbffr[i].z = 0.9619961f;
 
-                    groundedLoc.x = FLWheelPivot.localPosition.x;
+                    groundedLoc.x = tmpbffr[i].x;
                     groundedLoc.y = -m_hit[i].distance + frontOffset;
-                    groundedLoc.z = FLWheelPivot.localPosition.z;
+                    groundedLoc.z = tmpbffr[i].z;
 
                     FLWheelPivot.localPosition = groundedLoc;
                 }
 
                 if(!b_hasHit[i])
                 {
-                    inAirLoc.x = FLWheelPivot.localPosition.x;
+                    inAirLoc.x = tmpbffr[i].x;
                     inAirLoc.y = -rayLength + frontOffset;
-                    inAirLoc.z = FLWheelPivot.localPosition.z;
+                    inAirLoc.z = tmpbffr[i].z;
 
                     FLWheelPivot.localPosition = inAirLoc;
 
                 }
 
-                
+                if(b_isBoosting)
+                {
+                    boostingLoc.x = tmpbffr[i].x;
+                    boostingLoc.y = 0.83f;
+                    boostingLoc.z = 0.762f;
+
+                    FLWheelPivot.localPosition = Vector3.SmoothDamp(FLWheelPivot.localPosition, boostingLoc, ref smoothVel, Time.fixedDeltaTime * 2f);
 
 
+                }
 
+                if(!b_isBoosting)
+                {
+                    FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 3f);
+                }
 
 
 
