@@ -392,7 +392,7 @@ public class WheelCast : MonoBehaviour
                 }
                 else if(!b_hasHit[i])
                 {
-                    
+                    //This is when the wheel is actually in the air
 
                     
                     FLWheelPivot.localPosition = new Vector3(FLWheelPivot.localPosition.x, -rayLength + frontOffset, FLWheelPivot.localPosition.z);
