@@ -10,9 +10,33 @@ using UnityEngine.UIElements;
 
 public class WheelCast : MonoBehaviour
 {
+    /// <summary>
+    ///                 Set the wheel pivot locations to the ray starts
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    ///                 SET THE ROTATION OF THE WHEELS FIRST BEFORE THE BODY OF THE CAR
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// </summary>
+
+
     public Transform[] rays;
     public Transform[] frontWheels;
     public Transform[] rearWheels;
+    public Transform FLWheelPivot;
+    public Transform FRWheelPivot;
     public Transform liftPoint;
     
 
@@ -114,6 +138,8 @@ public class WheelCast : MonoBehaviour
 
                 b_Isgrounded = true;
                 b_hasHit[i] = true;
+
+                
 
                 
             
@@ -252,6 +278,7 @@ public class WheelCast : MonoBehaviour
         float boostRollAmount = 2.5f;
 
         
+        
 
         
         //Multiply DeltaTime; Higher values means faster
@@ -261,6 +288,8 @@ public class WheelCast : MonoBehaviour
         if(b_isBoosting && b_Isgrounded)
         {
             
+
+            
             Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
             
@@ -268,19 +297,7 @@ public class WheelCast : MonoBehaviour
             
             chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 5);
 
-            for(int i = 0; i < rays.Length; i++)
-            {
-                if(i == 0)
-                {
-                    Vector3 RotVec = Vector3.zero;
-
-                    RotVec.x = rays[i].localPosition.x;
-                    RotVec.y = 1.15f;
-                    RotVec.z = rays[i].localPosition.z;
-
-                    rays[i].localPosition =  RotVec;
-                }
-            }
+           
             
             
 
@@ -295,6 +312,8 @@ public class WheelCast : MonoBehaviour
 
             
             chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
+
+        
            
 
         }
@@ -354,22 +373,64 @@ public class WheelCast : MonoBehaviour
 
     void HandleWheelAnimations()
     {
-        ;
+
+        
+
 
         for(int i = 0; i <= rays.Length; i++)
             {
                if(i == 0)
                {
 
+                Vector3 newPos = new Vector3(FLWheelPivot.localPosition.x, -m_hit[i].distance + frontOffset, FLWheelPivot.localPosition.z);
+
                 if(b_hasHit[i])
                 {
-                    Vector3 newPos = new Vector3(FLWheel.localPosition.x, -m_hit[i].distance + frontOffset, FLWheel.localPosition.z);
-
-                    FLWheel.localPosition = newPos;
+                    
+                   
+                    FLWheelPivot.localPosition = newPos;
                 }
-                else
+                else if(!b_hasHit[i])
                 {
-                    FLWheel.localPosition = new Vector3(FLWheel.localPosition.x, -rayLength + frontOffset, FLWheel.localPosition.z);
+                    
+
+                    
+                    FLWheelPivot.localPosition = new Vector3(FLWheelPivot.localPosition.x, -rayLength + frontOffset, FLWheelPivot.localPosition.z);
+                }
+
+
+                if(b_isBoosting)
+                {
+                    Vector3 newVec = Vector3.zero;
+                    
+
+                    
+
+                      
+                    newVec.x = -0.42f;
+                    newVec.y = 0.85f;
+                    newVec.z = 0.749f;
+
+                    FLWheelPivot.localPosition = newVec;
+                    FLWheelPivot.localRotation = Quaternion.Euler(FLWheelPivot.localRotation.x, FLWheelPivot.localRotation.y, 15f);
+                    
+                }
+
+                else if(!b_isBoosting)
+                {
+                    Vector3 newVec = Vector3.zero;
+                    
+
+                    
+
+                      
+                    newVec.x = -0.42f;
+                    newVec.y = newPos.y;
+                    newVec.z = 0.983f;
+
+                    FLWheelPivot.localPosition = newVec;
+                    FLWheelPivot.localRotation = Quaternion.Euler(FLWheelPivot.localRotation.x, FLWheelPivot.localRotation.y, 0);
+
                 }
   
                }
@@ -430,6 +491,8 @@ public class WheelCast : MonoBehaviour
 
                }
 
+               FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+
                 
                
             }
@@ -478,8 +541,6 @@ public class WheelCast : MonoBehaviour
             b_isBoosting = false;
         }
 
-
-        print(rb.velocity);
 
 
     }
