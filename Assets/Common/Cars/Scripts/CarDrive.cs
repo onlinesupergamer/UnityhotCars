@@ -16,7 +16,7 @@ public class WheelCast : MonoBehaviour
     public Transform liftPoint;
 
 
-
+    
     public Rigidbody rb;
     public Transform chassisModel;
     public float suspensionRestDistance;
@@ -74,12 +74,6 @@ public class WheelCast : MonoBehaviour
         
     }
 
-    void Update()
-    {
-        
-    }
-
-
     
     void FixedUpdate()
     {
@@ -105,7 +99,7 @@ public class WheelCast : MonoBehaviour
                 
 
                 //Suspension
-                Vector3 springDir = rays[i].up;
+                Vector3 springDir = transform.up;
                 Vector3 tireWorldVel = rb.GetPointVelocity(rays[i].position);
                 float offset = suspensionRestDistance - m_hit[i].distance;
                 float Vel = Vector3.Dot(springDir, tireWorldVel);
@@ -130,7 +124,9 @@ public class WheelCast : MonoBehaviour
                 
             }
 
-            //Debug.DrawRay(ray.transform.position, -ray.transform.up * rayLength);
+            Debug.DrawRay(rays[i].position, -rays[i].up * rayLength);
+
+            
         }
 
         foreach(Transform wheel in rearWheels)
@@ -162,7 +158,7 @@ public class WheelCast : MonoBehaviour
             
 
             Quaternion target = Quaternion.Euler(0, 35 * x * slip, 0);
-            //wheel.transform.localRotation = target;
+            
 
         }
 
@@ -202,9 +198,7 @@ public class WheelCast : MonoBehaviour
 
         if(y == 0f && b_Isgrounded && rb.velocity.z <= 0.5f)
         {
-            Vector3 newVel = new Vector3(0,0,0);
-
-            //rb.velocity = newVel;
+           
 
         }
 
@@ -216,8 +210,7 @@ public class WheelCast : MonoBehaviour
             rb.AddForce(-transform.right * (Vector3.Dot(rb.velocity, transform.right) / Time.fixedDeltaTime / 16), ForceMode.Acceleration);
             rb.AddTorque(rb.transform.up * 400 * x * slip, ForceMode.Force);
 
-            
-            
+    
         }
 
         Speed = rb.velocity.magnitude;
@@ -240,7 +233,6 @@ public class WheelCast : MonoBehaviour
         HandleChassisAnimations();
         
 
-        
 
     }
 
@@ -250,33 +242,38 @@ public class WheelCast : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
         float rollAmount = 6f;
         float pitchAmount = 1f;
-        float boostPitchAmount = 8f;
+        float boostPitchAmount = 30f;
         float boostRollAmount = 2.5f;
 
-        var tmpbffr = rb.transform.localPosition;
+        
+
+        
+        //Multiply DeltaTime; Higher values means faster
+        
 
         
         if(b_isBoosting && b_Isgrounded)
         {
             
-            Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
-            
-            
-
+            Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
             
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, 0.5f);
+           
+            
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 5);
 
-
-
+            
         }
-        else if(!b_isBoosting || !b_Isgrounded)
+        else if(!b_isBoosting)
         {
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
+            
+            
 
             
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, 0.5f);
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
+           
 
         }
 
@@ -307,11 +304,11 @@ public class WheelCast : MonoBehaviour
         if(b_isBraking)
         {
            
-            b_isDrifting = true;
+            
         }
         else
         {
-            b_isDrifting = false;
+         
             
         }
     }
@@ -417,7 +414,7 @@ public class WheelCast : MonoBehaviour
 
             if(Input.GetKeyDown(KeyCode.G))
             {
-                Time.timeScale = 0.2f;
+                Time.timeScale = 0f;
                 Time.fixedDeltaTime = Time.timeScale * 0.02f;
             }
 
@@ -443,7 +440,7 @@ public class WheelCast : MonoBehaviour
             {
                 
 
-                rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
+                //rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
 
                 b_isBoosting = true;
             }
@@ -458,6 +455,9 @@ public class WheelCast : MonoBehaviour
         {
             b_isBoosting = false;
         }
+
+
+        print(rb.velocity);
 
 
     }
