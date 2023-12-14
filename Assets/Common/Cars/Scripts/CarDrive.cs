@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -16,6 +17,7 @@ public class WheelCast : MonoBehaviour
 
 
     Rigidbody rb;
+    public Transform chassisModel;
     public float suspensionRestDistance;
     public float springStrength;
     public float springDamper;
@@ -41,6 +43,7 @@ public class WheelCast : MonoBehaviour
     float inAirTimer = 0.0f;
     public float frontOffset = 0.235f;
     public float rearOffset = 0.235f;
+    float normSpeed;
 
 
     public Transform FLWheel;
@@ -55,7 +58,7 @@ public class WheelCast : MonoBehaviour
 
 
 
-    
+    [SerializeField]
     bool b_Isgrounded;
     
     bool b_isBoosting;
@@ -72,7 +75,7 @@ public class WheelCast : MonoBehaviour
 
     void Update()
     {
-        HandleWheelAnimations();
+        
     }
 
 
@@ -106,12 +109,12 @@ public class WheelCast : MonoBehaviour
                 float offset = suspensionRestDistance - m_hit[i].distance;
                 float Vel = Vector3.Dot(springDir, tireWorldVel);
                 float Force = (offset * springStrength) - (Vel * springDamper);
-
-                rb.AddForceAtPosition(springDir * Force, rays[i].position);
-                groundHit[i] = m_hit[i];
-
                 _i = i;
-                b_hasHit[i] = true;
+
+                groundHit[i] = m_hit[i];
+                rb.AddForceAtPosition(springDir * Force, rays[i].position);
+
+                
 
 
 
@@ -128,6 +131,7 @@ public class WheelCast : MonoBehaviour
 
 
                 b_Isgrounded = true;
+                b_hasHit[i] = true;
 
             
             }
@@ -146,11 +150,12 @@ public class WheelCast : MonoBehaviour
         {
             Vector3 accelDir = wheel.forward;
 
-            if(y != 0.0f && rb.velocity.magnitude <= topSpeed)
+            if(y != 0.0f && rb.velocity.magnitude <= topSpeed && b_Isgrounded)
             {
                 float carSpeed = Vector3.Dot(transform.forward, rb.velocity);
                 float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / topSpeed);
                 float torque = driveTorque.Evaluate(normalizedSpeed) * y * 1000;
+                normSpeed = normalizedSpeed;
 
                 
 
@@ -167,7 +172,7 @@ public class WheelCast : MonoBehaviour
             float m_normalizedSpeed = Mathf.Clamp01(Mathf.Abs(m_carSpeed) / topSpeed);
             float m_slipAngle = slipCurve.Evaluate(m_normalizedSpeed);
             slip = m_slipAngle;
-
+            
 
             Quaternion target = Quaternion.Euler(0, 35 * x * slip, 0);
             //wheel.transform.localRotation = target;
@@ -182,23 +187,28 @@ public class WheelCast : MonoBehaviour
 
         if(x == 0f && b_Isgrounded)
         {
+
             
-             //Lower Time means slower rotation correction
+            //Lower Time means slower rotation correction
 
             //This Method is inefficient as fuck
             //But it works so I won't mess with it yet
 
             if(!b_isSlipping)
             {
-                float interpTime = 0.05f; 
+                float interpTime = 0.25f; 
                 rb.angularVelocity = new Vector3(rb.angularVelocity.x, Mathf.Lerp(rb.angularVelocity.y, 0, interpTime), rb.angularVelocity.z);
+                
             }  
 
             else
             {
-                float interpTime = 0.01f; 
+                float interpTime = 0.15f; 
+                
 
                 rb.angularVelocity = new Vector3(rb.angularVelocity.x, Mathf.Lerp(rb.angularVelocity.y, 0, interpTime), rb.angularVelocity.z);
+
+                
             } 
 
         }
@@ -216,7 +226,7 @@ public class WheelCast : MonoBehaviour
         {
 
             inAirTimer = 0.0f;
-            rb.AddForce(-transform.right * (Vector3.Dot(rb.velocity, transform.right) / Time.fixedDeltaTime / 32), ForceMode.Acceleration);
+            rb.AddForce(-transform.right * (Vector3.Dot(rb.velocity, transform.right) / Time.fixedDeltaTime / 16), ForceMode.Acceleration);
             rb.AddTorque(rb.transform.up * 400 * x * slip, ForceMode.Force);
 
             
@@ -239,9 +249,29 @@ public class WheelCast : MonoBehaviour
 
         HandleBrake();
         HandleBoost();
+        HandleWheelAnimations();
+        HandleChassisAnimations();
         
 
         
+
+    }
+
+    void HandleChassisAnimations()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+        float rollAmount = 10f;
+        float pitchAmount = 2.5f;
+
+        Quaternion rollRotation = transform.rotation * Quaternion.Euler(-y * pitchAmount, 0f, -rollAmount * (x * normSpeed));
+
+        chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, rollRotation, Time.fixedDeltaTime * 3.5f);
+
+
+        
+
+
 
     }
 
@@ -249,7 +279,7 @@ public class WheelCast : MonoBehaviour
     {
         bool b_isBraking = Input.GetButton("Jump");
 
-        if(b_isBraking)
+        if(b_isBraking && b_Isgrounded)
         {
             //This may need to be inversed
             float newSpeed = Mathf.Lerp(rb.velocity.z, rb.velocity.z / 4f, 1f);
@@ -374,6 +404,17 @@ public class WheelCast : MonoBehaviour
 
                 
                
+            }
+
+            if(Input.GetKeyDown(KeyCode.G))
+            {
+                Time.timeScale = 0f;
+                Time.fixedDeltaTime = Time.timeScale * 0.02f;
+            }
+
+             if(Input.GetKeyDown(KeyCode.H))
+            {
+                Time.timeScale = 1f;
             }
             
 

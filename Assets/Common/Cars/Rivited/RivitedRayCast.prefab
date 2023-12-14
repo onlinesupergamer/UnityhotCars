@@ -89,7 +89,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &1251894593791818278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,9 +113,10 @@ MonoBehaviour:
   rearWheels:
   - {fileID: 8610353549527538876}
   - {fileID: 6919485887757625921}
+  chassisModel: {fileID: 1978873635534526318}
   suspensionRestDistance: 0.45
-  springStrength: 8000
-  springDamper: 250
+  springStrength: 15000
+  springDamper: 350
   rayLength: 0.5
   tireGripFactor: 1
   driveTorque:
@@ -173,22 +174,31 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.18171176
     - serializedVersion: 3
-      time: 0.30427897
-      value: 0.996215
-      inSlope: 0.029466297
-      outSlope: 0.029466297
+      time: 0.113004506
+      value: 0.16808932
+      inSlope: 4.284339
+      outSlope: 4.284339
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.33333334
+      outWeight: 0.24082679
     - serializedVersion: 3
-      time: 0.46203956
-      value: 0.8851983
-      inSlope: -1.056812
-      outSlope: -1.056812
+      time: 0.14086066
+      value: 0.85977286
+      inSlope: 2.0403802
+      outSlope: 2.0403802
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
+      outWeight: 0.080319636
+    - serializedVersion: 3
+      time: 0.48302904
+      value: 0.9318304
+      inSlope: -0.31326136
+      outSlope: -0.31326136
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.19417712
       outWeight: 0.31528896
     - serializedVersion: 3
       time: 0.64988905
@@ -223,11 +233,7 @@ MonoBehaviour:
   FRWheel: {fileID: 2180825287106825031}
   RLWheel: {fileID: 3865628677470242238}
   RRWheel: {fileID: 1254852593852264683}
-  Dist:
-  - 0
-  - 0
-  - 0
-  - 0
+  b_Isgrounded: 0
 --- !u!1 &532378697920413881
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +674,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
         type: 3}
       propertyPath: m_Name
-      value: WheelModel (1)
+      value: WheelModelRR
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -742,7 +748,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
         type: 3}
       propertyPath: m_Name
-      value: WheelModel (1)
+      value: WheelModelFR
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -816,7 +822,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
         type: 3}
       propertyPath: m_Name
-      value: WheelModel
+      value: WheelModelFL
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -999,7 +1005,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 81ef6900075629d47b03b84385ae6f28,
         type: 3}
       propertyPath: m_Name
-      value: WheelModel
+      value: WheelModelRL
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
