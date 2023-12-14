@@ -22,7 +22,8 @@ public class WheelCast : MonoBehaviour
     /// 
     /// 
     /// 
-    ///                 SET THE ROTATION OF THE WHEELS FIRST BEFORE THE BODY OF THE CAR
+    ///                 
+    ///                 USE EMPTY GAME OBJECTS FOR BOOST WHEEL LOCATIONS
     /// 
     /// 
     /// 
@@ -281,28 +282,13 @@ public class WheelCast : MonoBehaviour
         float boostRollAmount = 2.5f;
 
         
-        
-
-        
         //Multiply DeltaTime; Higher values means faster
-        
-
-        
         if(b_isBoosting && b_Isgrounded)
         {
-            
 
-            
             Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
-            
-            
-            
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 5);
-
-           
-            
-            
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
 
             
         }
@@ -311,13 +297,8 @@ public class WheelCast : MonoBehaviour
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
             
-            
-
-            
             chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
-
-        
-           
+  
 
         }
 
@@ -382,18 +363,19 @@ public class WheelCast : MonoBehaviour
 
         for(int i = 0; i <= rays.Length; i++)
         {
-            
-            
+  
 
             if(i == 0)
             {
-                tmpbffr[i] = FLWheelPivot.localPosition;
+                tmpbffr[i] = rays[i].localPosition;
                     
 
                 Vector3 groundedLoc = Vector3.zero;
                 Vector3 inAirLoc = Vector3.zero;
                 Vector3 boostingLoc = Vector3.zero;
-                Vector3 smoothVel = Vector3.zero;
+
+                Vector3 Testvec = Vector3.zero;
+                
 
 
                 if(b_hasHit[i] && !b_isBoosting)
@@ -401,18 +383,22 @@ public class WheelCast : MonoBehaviour
                     
                     tmpbffr[i].z = 0.9619961f;
 
-                    groundedLoc.x = tmpbffr[i].x;
+                    groundedLoc.x = 0f;
                     groundedLoc.y = -m_hit[i].distance + frontOffset;
-                    groundedLoc.z = tmpbffr[i].z;
+                    groundedLoc.z = 0f;
+
+                    Testvec.y = -m_hit[i].distance;
 
                     FLWheelPivot.localPosition = groundedLoc;
+
+                    
                 }
 
                 if(!b_hasHit[i])
                 {
-                    inAirLoc.x = tmpbffr[i].x;
+                    inAirLoc.x = 0f;
                     inAirLoc.y = -rayLength + frontOffset;
-                    inAirLoc.z = tmpbffr[i].z;
+                    inAirLoc.z = 0f;
 
                     FLWheelPivot.localPosition = inAirLoc;
 
@@ -420,30 +406,169 @@ public class WheelCast : MonoBehaviour
 
                 if(b_isBoosting)
                 {
-                    boostingLoc.x = tmpbffr[i].x;
+                    boostingLoc.x = 0f;
                     boostingLoc.y = 0.83f;
-                    boostingLoc.z = 0.762f;
+                    boostingLoc.z = -0.199f;
 
-                    FLWheelPivot.localPosition = Vector3.SmoothDamp(FLWheelPivot.localPosition, boostingLoc, ref smoothVel, Time.fixedDeltaTime * 2f);
+                    FLWheelPivot.localPosition = Vector3.MoveTowards(FLWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
 
 
                 }
 
                 if(!b_isBoosting)
                 {
-                    FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 3f);
+                    //FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 10f);
                 }
 
+            }
+
+            
+            if(i == 1)
+            {
+                tmpbffr[i] = rays[i].localPosition;
+                    
+
+                Vector3 groundedLoc = Vector3.zero;
+                Vector3 inAirLoc = Vector3.zero;
+                Vector3 boostingLoc = Vector3.zero;
+
+                Vector3 Testvec = Vector3.zero;
+                
+
+
+                if(b_hasHit[i] && !b_isBoosting)
+                {
+                    
+                    tmpbffr[i].z = 0.9619961f;
+
+                    groundedLoc.x = 0f;
+                    groundedLoc.y = -m_hit[i].distance + frontOffset;
+                    groundedLoc.z = 0f;
+
+                    Testvec.y = -m_hit[i].distance;
+
+                    FRWheelPivot.localPosition = groundedLoc;
+
+                    
+                }
+
+                if(!b_hasHit[i])
+                {
+                    inAirLoc.x = 0f;
+                    inAirLoc.y = -rayLength + frontOffset;
+                    inAirLoc.z = 0f;
+
+                    FRWheelPivot.localPosition = inAirLoc;
+
+                }
+
+                if(b_isBoosting)
+                {
+                    boostingLoc.x = 0f;
+                    boostingLoc.y = 0.83f;
+                    boostingLoc.z = -0.199f;
+
+                    FRWheelPivot.localPosition = Vector3.MoveTowards(FRWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
+
+
+                }
+
+                if(!b_isBoosting)
+                {
+                    //FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 10f);
+                }
 
 
             }
 
-               
+            if(i == 2)
+            {
+                tmpbffr[i] = rays[i].localPosition;
+                    
 
-               FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+                Vector3 groundedLoc = Vector3.zero;
+                Vector3 inAirLoc = Vector3.zero;
+                Vector3 boostingLoc = Vector3.zero;
+
+                Vector3 Testvec = Vector3.zero;
+                
+
+
+                if(b_hasHit[i] && !b_isBoosting)
+                {
+                    
+                    tmpbffr[i].z = 0.9619961f;
+
+                    groundedLoc.x = 0f;
+                    groundedLoc.y = -m_hit[i].distance + rearOffset;
+                    groundedLoc.z = 0f;
+
+                    Testvec.y = -m_hit[i].distance;
+
+                    RLWheel.localPosition = groundedLoc;
+
+                    
+                }
+
+                if(!b_hasHit[i])
+                {
+                    inAirLoc.x = 0f;
+                    inAirLoc.y = -rayLength + rearOffset;
+                    inAirLoc.z = 0f;
+
+                    RLWheel.localPosition = inAirLoc;
+
+                }
+
+            }
+
+            if(i == 3)
+            {
+                tmpbffr[i] = rays[i].localPosition;
+                    
+
+                Vector3 groundedLoc = Vector3.zero;
+                Vector3 inAirLoc = Vector3.zero;
+                Vector3 boostingLoc = Vector3.zero;
+
+                Vector3 Testvec = Vector3.zero;
+                
+
+
+                if(b_hasHit[i] && !b_isBoosting)
+                {
+                    
+                    tmpbffr[i].z = 0.9619961f;
+
+                    groundedLoc.x = 0f;
+                    groundedLoc.y = -m_hit[i].distance + rearOffset;
+                    groundedLoc.z = 0f;
+
+                    Testvec.y = -m_hit[i].distance;
+
+                    RRWheel.localPosition = groundedLoc;
+
+                    
+                }
+
+                if(!b_hasHit[i])
+                {
+                    inAirLoc.x = 0f;
+                    inAirLoc.y = -rayLength + rearOffset;
+                    inAirLoc.z = 0f;
+
+                    RRWheel.localPosition = inAirLoc;
+
+                }
+
  
-               
+            }
+
+         
         }
+
+
+
 
         if(Input.GetKeyDown(KeyCode.G))
         {
@@ -455,6 +580,11 @@ public class WheelCast : MonoBehaviour
         {
             Time.timeScale = 1f;
         }
+
+
+        FRWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+        FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+        
             
 
     }
