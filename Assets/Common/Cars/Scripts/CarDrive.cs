@@ -39,7 +39,8 @@ public class WheelCast : MonoBehaviour
     public Transform[] rearWheels;
     public Transform FLWheelPivot;
     public Transform FRWheelPivot;
-    public Transform liftPoint;
+    public Transform FLPosition;
+    public Transform FRPosition;
     
 
 
@@ -283,6 +284,7 @@ public class WheelCast : MonoBehaviour
 
         
         //Multiply DeltaTime; Higher values means faster
+
         if(b_isBoosting && b_Isgrounded)
         {
 
@@ -410,7 +412,8 @@ public class WheelCast : MonoBehaviour
                     boostingLoc.y = 0.83f;
                     boostingLoc.z = -0.199f;
 
-                    FLWheelPivot.localPosition = Vector3.MoveTowards(FLWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
+                    //FLWheelPivot.localPosition = Vector3.MoveTowards(FLWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
+                    FLWheelPivot.localPosition = FLPosition.localPosition;
 
 
                 }
