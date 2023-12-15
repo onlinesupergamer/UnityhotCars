@@ -266,7 +266,7 @@ public class WheelCast : MonoBehaviour
 
         HandleBrake();
         HandleBoost();
-        HandleWheelAnimations();
+        //HandleWheelAnimations();
         HandleChassisAnimations();
         
 
@@ -290,7 +290,7 @@ public class WheelCast : MonoBehaviour
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
+            //chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
 
             
         }
@@ -299,7 +299,7 @@ public class WheelCast : MonoBehaviour
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
             
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
+            //chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
   
 
         }
@@ -596,14 +596,28 @@ public class WheelCast : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.LeftShift))
         {
+            RaycastHit _hit;
  
             Vector3 BoostVel = rb.transform.forward * topSpeed;
             Vector3 velChange = BoostVel - rb.velocity; //What the hell is this math
             Vector3 accel = velChange / Time.fixedDeltaTime;
             accel = Vector3.ClampMagnitude(accel, 100f);
 
-            if(b_Isgrounded)
+            if(b_Isgrounded) //This is debug, it should be grounded not !
             {
+            
+
+                if(Physics.Raycast(transform.position, -transform.up, out _hit, 5, groundMask))
+                {
+                    Quaternion newRotVec = Quaternion.AngleAxis(2f, rb.transform.right);
+
+                    rb.rotation = newRotVec;
+
+                    
+
+                    
+                }
+
                 
 
                 //rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
