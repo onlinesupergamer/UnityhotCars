@@ -1,12 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Collections;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 
 public class WheelCast : MonoBehaviour
@@ -71,6 +67,9 @@ public class WheelCast : MonoBehaviour
     float slipAmount;
     [SerializeField]
     float inAirTimer = 0.0f;
+    [SerializeField]
+    Vector3 rot;
+
     public float frontOffset = 0.235f;
     public float rearOffset = 0.235f;
     float normSpeed;
@@ -112,6 +111,14 @@ public class WheelCast : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
 
         HandleGravity();
+
+
+        rot = new Vector3(1,0,0);
+       
+
+        
+
+        
 
         
         ///
@@ -579,7 +586,7 @@ public class WheelCast : MonoBehaviour
             Time.fixedDeltaTime = Time.timeScale * 0.02f;
         }
 
-            if(Input.GetKeyDown(KeyCode.H))
+        if(Input.GetKeyDown(KeyCode.H))
         {
             Time.timeScale = 1f;
         }
@@ -587,6 +594,8 @@ public class WheelCast : MonoBehaviour
 
         FRWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
         FLWheelPivot.localRotation = Quaternion.Euler(0, Input.GetAxisRaw("Horizontal") * 45, 0);
+
+        
         
             
 
@@ -603,15 +612,28 @@ public class WheelCast : MonoBehaviour
             Vector3 accel = velChange / Time.fixedDeltaTime;
             accel = Vector3.ClampMagnitude(accel, 100f);
 
-            if(b_Isgrounded) //This is debug, it should be grounded not !
+            if(!b_Isgrounded) //This is debug, it should be grounded not !
             {
+
+                float maxAngle = 5f;
+                float minAngle = maxAngle;
+                float angleDiff = transform.localRotation.x;
+
+                
+
+                
+
+
+                float angleDiffNorm = Mathf.InverseLerp(-1, 1, angleDiff);
+                //angleDiffNorm = Mathf.Clamp(angleDiffNorm, -1, 1);
+                
+                
+
             
 
                 if(Physics.Raycast(transform.position, -transform.up, out _hit, 5, groundMask))
                 {
-                    Quaternion newRotVec = Quaternion.AngleAxis(2f, rb.transform.right);
-
-                    rb.rotation = newRotVec;
+                    
 
                     
 
