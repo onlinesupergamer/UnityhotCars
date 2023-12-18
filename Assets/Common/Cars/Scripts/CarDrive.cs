@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Mathematics;
+using Unity.VisualScripting;
+using UnityEditor.Search;
 using UnityEngine;
 
 
@@ -30,6 +33,7 @@ public class WheelCast : MonoBehaviour
     /// </summary>
 
 
+    public Quaternion currentRotation;
     public Transform[] rays;
     public Transform[] frontWheels;
     public Transform[] rearWheels;
@@ -37,7 +41,7 @@ public class WheelCast : MonoBehaviour
     public Transform FRWheelPivot;
     public Transform FLPosition;
     public Transform FRPosition;
-    
+    public Transform LiftPoint;
 
 
     
@@ -67,8 +71,7 @@ public class WheelCast : MonoBehaviour
     float slipAmount;
     [SerializeField]
     float inAirTimer = 0.0f;
-    [SerializeField]
-    Vector3 rot;
+    
 
     public float frontOffset = 0.235f;
     public float rearOffset = 0.235f;
@@ -96,6 +99,9 @@ public class WheelCast : MonoBehaviour
     
     
     
+    [SerializeField]
+    Quaternion localSpaceRotation;
+
 
     void Start()
     {
@@ -111,14 +117,6 @@ public class WheelCast : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
 
         HandleGravity();
-
-
-        rot = new Vector3(1,0,0);
-       
-
-        
-
-        
 
         
         ///
@@ -240,11 +238,6 @@ public class WheelCast : MonoBehaviour
 
         }
 
-        if(y == 0f && b_Isgrounded && rb.velocity.z <= 0.5f)
-        {
-           
-
-        }
 
 
         if(b_Isgrounded)
@@ -271,10 +264,17 @@ public class WheelCast : MonoBehaviour
         slipAmount = Mathf.Abs(Vector3.Dot(rb.velocity, rb.transform.right));
         
 
-        HandleBrake();
+        //HandleBrake();
         HandleBoost();
-        //HandleWheelAnimations();
-        HandleChassisAnimations();
+        HandleWheelAnimations();
+        //HandleChassisAnimations();
+
+        
+
+        
+
+
+
         
 
 
@@ -330,29 +330,12 @@ public class WheelCast : MonoBehaviour
 
     }
 
-    void HandleDrift()
-    {
-        bool b_isBraking = Input.GetButton("Jump");
-        
-
-        if(b_isBraking)
-        {
-           
-            
-        }
-        else
-        {
-         
-            
-        }
-    }
-
     void HandleGravity()
     {
         float groundedGravity = 1200;
         float airGravity = 2000;
 
-        if(b_Isgrounded)
+        if(b_hasHit[0] || b_hasHit[1] || b_hasHit[2] || b_hasHit[3])
         {
             rb.AddForce(m_hit[_i].normal * -groundedGravity);
 
@@ -420,7 +403,9 @@ public class WheelCast : MonoBehaviour
                     boostingLoc.z = -0.199f;
 
                     //FLWheelPivot.localPosition = Vector3.MoveTowards(FLWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
-                    FLWheelPivot.localPosition = FLPosition.localPosition;
+                    //FLWheelPivot.localPosition = FLPosition.localPosition;
+
+                    FLWheelPivot.localEulerAngles = FLPosition.localEulerAngles;
 
 
                 }
@@ -478,7 +463,9 @@ public class WheelCast : MonoBehaviour
                     boostingLoc.y = 0.83f;
                     boostingLoc.z = -0.199f;
 
-                    FRWheelPivot.localPosition = Vector3.MoveTowards(FRWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
+                    //FRWheelPivot.localPosition = Vector3.MoveTowards(FRWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
+
+                    FRWheelPivot.localEulerAngles = FRPosition.localEulerAngles;
 
 
                 }
@@ -603,44 +590,40 @@ public class WheelCast : MonoBehaviour
 
     void HandleBoost()
     {
+       
         if(Input.GetKey(KeyCode.LeftShift))
         {
-            RaycastHit _hit;
+            
  
             Vector3 BoostVel = rb.transform.forward * topSpeed;
             Vector3 velChange = BoostVel - rb.velocity; //What the hell is this math
             Vector3 accel = velChange / Time.fixedDeltaTime;
             accel = Vector3.ClampMagnitude(accel, 100f);
 
-            if(!b_Isgrounded) //This is debug, it should be grounded not !
+           
+           
+
+
+            if(b_Isgrounded)
             {
 
-                float maxAngle = 5f;
-                float minAngle = maxAngle;
-                float angleDiff = transform.localRotation.x;
-
                 
-
+                RaycastHit _hit;
                 
-
-
-                float angleDiffNorm = Mathf.InverseLerp(-1, 1, angleDiff);
-                //angleDiffNorm = Mathf.Clamp(angleDiffNorm, -1, 1);
-                
-                
-
             
 
-                if(Physics.Raycast(transform.position, -transform.up, out _hit, 5, groundMask))
+
+                if(Physics.Raycast(LiftPoint.position, -LiftPoint.up, out _hit, 1f))
                 {
-                    
+
 
                     
-
-                    
-                }
+    
 
                 
+                }
+
+
 
                 //rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
 
@@ -656,6 +639,9 @@ public class WheelCast : MonoBehaviour
         else
         {
             b_isBoosting = false;
+
+             
+
         }
 
 
