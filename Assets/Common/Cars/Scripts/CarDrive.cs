@@ -16,10 +16,7 @@ public class WheelCast : MonoBehaviour
     /// 
     /// 
     /// 
-    /// 
-    /// 
-    /// 
-    /// 
+    
     /// 
     ///                 
     ///                 USE EMPTY GAME OBJECTS FOR BOOST WHEEL LOCATIONS
@@ -42,6 +39,8 @@ public class WheelCast : MonoBehaviour
     public Transform FLPosition;
     public Transform FRPosition;
     public Transform LiftPoint;
+
+    public PIDController hoverPID;
 
 
     
@@ -116,13 +115,31 @@ public class WheelCast : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
         float x = Input.GetAxisRaw("Horizontal");
 
-        HandleGravity();
+        
 
         
         ///
         ///
         ///
         ///
+
+        RaycastHit hitInfo;
+
+        if(Physics.Raycast(LiftPoint.position, -transform.up, out hitInfo, 1f))
+        {
+            Vector3 hitNormal = hitInfo.normal.normalized;
+            float floatPercent = hoverPID.Seek(1f, hitInfo.distance);
+            float liftForce = 35f;
+
+            Vector3 force = hitNormal * liftForce * floatPercent;
+
+            rb.AddForceAtPosition(force, LiftPoint.position, ForceMode.Acceleration);
+
+
+        }
+
+        HandleGravity();
+        
 
 
         for(int i = 0; i < rays.Length; i++)
@@ -135,7 +152,7 @@ public class WheelCast : MonoBehaviour
                 
 
                 //Suspension
-                Vector3 springDir = rays[i].up;
+                Vector3 springDir = m_hit[i].normal;
                 Vector3 tireWorldVel = rb.GetPointVelocity(rays[i].position);
                 float offset = suspensionRestDistance - m_hit[i].distance;
                 float Vel = Vector3.Dot(springDir, tireWorldVel);
@@ -144,6 +161,8 @@ public class WheelCast : MonoBehaviour
 
                 groundHit[i] = m_hit[i];
                 rb.AddForceAtPosition(springDir * Force, rays[i].position);
+
+                
 
 
                 b_Isgrounded = true;
@@ -297,7 +316,7 @@ public class WheelCast : MonoBehaviour
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
 
-            //chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
 
             
         }
@@ -306,7 +325,7 @@ public class WheelCast : MonoBehaviour
 
             Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
             
-            //chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
+            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
   
 
         }
