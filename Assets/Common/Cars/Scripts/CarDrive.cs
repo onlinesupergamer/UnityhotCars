@@ -129,16 +129,17 @@ public class WheelCast : MonoBehaviour
         {
             Vector3 hitNormal = hitInfo.normal.normalized;
             float floatPercent = hoverPID.Seek(1f, hitInfo.distance);
-            float liftForce = 35f;
+            float liftForce = 55f;
 
             Vector3 force = hitNormal * liftForce * floatPercent;
 
-            rb.AddForceAtPosition(force, LiftPoint.position, ForceMode.Acceleration);
+            if(b_isBoosting)
+                rb.AddForceAtPosition(force, LiftPoint.position, ForceMode.Acceleration);
 
 
         }
 
-        HandleGravity();
+        HandleGravity(); //Gravity needs to come after the PID controller
         
 
 
@@ -159,27 +160,50 @@ public class WheelCast : MonoBehaviour
                 float Force = (offset * springStrength) - (Vel * springDamper);
                 _i = i;
 
-                groundHit[i] = m_hit[i];
-                rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                groundHit[i] = m_hit[i]; //Potentially unneeded
+
+
+                if(i == 0 || i == 1)
+                {
+                    if(!b_isBoosting)
+                    {
+                        rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                    }
+                }
+                
+                if(i == 2 || i == 3)
+                {
+                    rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                }
 
                 
-
-
-                b_Isgrounded = true;
+                
                 b_hasHit[i] = true;
-
-                
-
-                
+ 
             
+            }
+
+            else
+
+            {
+                
+                b_hasHit[i] = false;
+                
+            }
+
+
+
+            if(b_hasHit[0] || b_hasHit[1] || b_hasHit[2] || b_hasHit[3])
+            {
+                b_Isgrounded = true;
             }
 
             else
             {
                 b_Isgrounded = false;
-                b_hasHit[i] = false;
-                
             }
+
+
 
             Debug.DrawRay(rays[i].position, -rays[i].up * rayLength);
 
@@ -208,6 +232,8 @@ public class WheelCast : MonoBehaviour
             }
 
         }
+
+        
 
 
         foreach(Transform wheel in frontWheels)
@@ -389,7 +415,7 @@ public class WheelCast : MonoBehaviour
                 
 
 
-                if(b_hasHit[i] && !b_isBoosting)
+                if(b_hasHit[i])
                 {
                     
                     tmpbffr[i].z = 0.9619961f;
@@ -415,24 +441,6 @@ public class WheelCast : MonoBehaviour
 
                 }
 
-                if(b_isBoosting)
-                {
-                    boostingLoc.x = 0f;
-                    boostingLoc.y = 0.83f;
-                    boostingLoc.z = -0.199f;
-
-                    //FLWheelPivot.localPosition = Vector3.MoveTowards(FLWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
-                    //FLWheelPivot.localPosition = FLPosition.localPosition;
-
-                    FLWheelPivot.localEulerAngles = FLPosition.localEulerAngles;
-
-
-                }
-
-                if(!b_isBoosting)
-                {
-                    //FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 10f);
-                }
 
             }
 
@@ -474,24 +482,6 @@ public class WheelCast : MonoBehaviour
 
                     FRWheelPivot.localPosition = inAirLoc;
 
-                }
-
-                if(b_isBoosting)
-                {
-                    boostingLoc.x = 0f;
-                    boostingLoc.y = 0.83f;
-                    boostingLoc.z = -0.199f;
-
-                    //FRWheelPivot.localPosition = Vector3.MoveTowards(FRWheelPivot.localPosition, boostingLoc, Time.fixedDeltaTime * 10f);
-
-                    FRWheelPivot.localEulerAngles = FRPosition.localEulerAngles;
-
-
-                }
-
-                if(!b_isBoosting)
-                {
-                    //FLWheelPivot.localPosition = Vector3.Lerp(FLWheelPivot.localPosition, tmpbffr[i], Time.fixedDeltaTime * 10f);
                 }
 
 
@@ -626,26 +616,7 @@ public class WheelCast : MonoBehaviour
             if(b_Isgrounded)
             {
 
-                
-                RaycastHit _hit;
-                
-            
-
-
-                if(Physics.Raycast(LiftPoint.position, -LiftPoint.up, out _hit, 1f))
-                {
-
-
-                    
-    
-
-                
-                }
-
-
-
-                //rb.AddForce(Vector3.ProjectOnPlane(accel, m_hit[_i].normal), ForceMode.Acceleration);
-
+               
                 b_isBoosting = true;
             }
 
