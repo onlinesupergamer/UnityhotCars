@@ -11,15 +11,14 @@ using UnityEngine;
 public class WheelCast : MonoBehaviour
 {
     /// <summary>
-    ///                 Set the wheel pivot locations to the ray starts
+    ///                 
     /// 
     /// 
     /// 
     /// 
-    
     /// 
     ///                 
-    ///                 USE EMPTY GAME OBJECTS FOR BOOST WHEEL LOCATIONS
+    ///                 
     /// 
     /// 
     /// 
@@ -28,9 +27,12 @@ public class WheelCast : MonoBehaviour
     /// 
     /// 
     /// </summary>
+    
 
 
-    public Quaternion currentRotation;
+
+    [Header("Main Vars")]
+
     public Transform[] rays;
     public Transform[] frontWheels;
     public Transform[] rearWheels;
@@ -39,6 +41,7 @@ public class WheelCast : MonoBehaviour
     public Transform FLPosition;
     public Transform FRPosition;
     public Transform LiftPoint;
+    public Transform DownPoint;
 
     public PIDController hoverPID;
 
@@ -87,6 +90,9 @@ public class WheelCast : MonoBehaviour
     bool[] b_hasHit = new bool[4];
     int _i;
 
+    [SerializeField]
+    float[] offset = new float[4];
+
     
 
 
@@ -97,14 +103,12 @@ public class WheelCast : MonoBehaviour
     bool b_isBoosting;
     
     
-    
-    [SerializeField]
-    Quaternion localSpaceRotation;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
         
         
     }
@@ -115,31 +119,31 @@ public class WheelCast : MonoBehaviour
         float y = Input.GetAxisRaw("Vertical");
         float x = Input.GetAxisRaw("Horizontal");
 
-        
+        HandleGravity();
 
-        
-        ///
-        ///
-        ///
-        ///
 
         RaycastHit hitInfo;
 
-        if(Physics.Raycast(LiftPoint.position, -transform.up, out hitInfo, 1f))
+        if(Physics.Raycast(LiftPoint.position, -transform.up, out hitInfo, 1.5f))
         {
             Vector3 hitNormal = hitInfo.normal.normalized;
             float floatPercent = hoverPID.Seek(1f, hitInfo.distance);
-            float liftForce = 55f;
+            float liftForce = 100;
 
             Vector3 force = hitNormal * liftForce * floatPercent;
+            //force = Vector3.ProjectOnPlane(force, hitNormal);
 
             if(b_isBoosting)
-                rb.AddForceAtPosition(force, LiftPoint.position, ForceMode.Acceleration);
-
+            {
+                //rb.AddForceAtPosition(force, LiftPoint.position, ForceMode.Acceleration);
+                
+                rb.AddTorque(-transform.right * liftForce * floatPercent, ForceMode.Acceleration);
+                
+            }
 
         }
 
-        HandleGravity(); //Gravity needs to come after the PID controller
+        
         
 
 
@@ -147,19 +151,27 @@ public class WheelCast : MonoBehaviour
         {
             
             
+            
 
             if(Physics.Raycast(rays[i].transform.position, -rays[i].transform.up, out m_hit[i], rayLength, groundMask))
             {
-                
+                ///
+                ///                                 
+                ///                                 
+                ///
+
+
 
                 //Suspension
-                Vector3 springDir = m_hit[i].normal;
+                
+                Vector3 springDir = transform.up;
                 Vector3 tireWorldVel = rb.GetPointVelocity(rays[i].position);
-                float offset = suspensionRestDistance - m_hit[i].distance;
+                offset[i] = suspensionRestDistance - m_hit[i].distance;
                 float Vel = Vector3.Dot(springDir, tireWorldVel);
-                float Force = (offset * springStrength) - (Vel * springDamper);
+                float Force = (offset[i] * springStrength) - (Vel * springDamper);
                 _i = i;
 
+                
                 groundHit[i] = m_hit[i]; //Potentially unneeded
 
 
@@ -173,7 +185,21 @@ public class WheelCast : MonoBehaviour
                 
                 if(i == 2 || i == 3)
                 {
-                    rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                   if(!b_isBoosting)
+                    {
+                        
+                        rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                    }
+
+                    else
+                    {
+                        
+                        rb.AddForceAtPosition(springDir * Force, rays[i].position);
+                        
+                        
+                        
+
+                    }
                 }
 
                 
@@ -205,35 +231,31 @@ public class WheelCast : MonoBehaviour
 
 
 
-            Debug.DrawRay(rays[i].position, -rays[i].up * rayLength);
-
+            Debug.DrawRay(rays[i].position, -transform.up * rayLength);
             
 
+ 
             
-
-            
-        }
-
-        foreach(Transform wheel in rearWheels)
-        {
-            Vector3 accelDir = wheel.forward;
-
-            if(y != 0.0f && rb.velocity.magnitude <= topSpeed && b_Isgrounded)
-            {
-                float carSpeed = Vector3.Dot(transform.forward, rb.velocity);
-                float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / topSpeed);
-                float torque = driveTorque.Evaluate(normalizedSpeed) * y * 1000;
-                normSpeed = normalizedSpeed;
-
-                
-
-                rb.AddForceAtPosition(Vector3.ProjectOnPlane(accelDir, groundHit[_i].normal) * torque, wheel.position);
-                
-            }
-
         }
 
         
+        Vector3 accelDir = rays[_i].forward;
+
+        if(y != 0.0f && rb.velocity.magnitude <= topSpeed && b_Isgrounded)
+        {
+            float carSpeed = Vector3.Dot(transform.forward, rb.velocity);
+            float normalizedSpeed = Mathf.Clamp01(Mathf.Abs(carSpeed) / topSpeed);
+            float torque = driveTorque.Evaluate(normalizedSpeed) * y * 1250f;
+            normSpeed = normalizedSpeed;
+            Vector3 projectedSpeed = Vector3.ProjectOnPlane(transform.forward, hitInfo.normal);
+
+            Debug.DrawRay(transform.position, projectedSpeed * 2f, Color.green);
+
+ 
+            rb.AddForce(projectedSpeed * torque);
+                
+        }
+
 
 
         foreach(Transform wheel in frontWheels)
@@ -309,54 +331,10 @@ public class WheelCast : MonoBehaviour
         slipAmount = Mathf.Abs(Vector3.Dot(rb.velocity, rb.transform.right));
         
 
-        //HandleBrake();
+       
         HandleBoost();
         HandleWheelAnimations();
-        //HandleChassisAnimations();
-
         
-
-        
-
-
-
-        
-
-
-    }
-
-    void HandleChassisAnimations()
-    {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-        float rollAmount = 6f;
-        float pitchAmount = 1f;
-        float boostPitchAmount = 30f;
-        float boostRollAmount = 2.5f;
-
-        
-        //Multiply DeltaTime; Higher values means faster
-
-        if(b_isBoosting && b_Isgrounded)
-        {
-
-            Quaternion newRotation = transform.rotation * Quaternion.Euler(-boostPitchAmount, 0f, -boostRollAmount * (x * normSpeed));
-
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10);
-
-            
-        }
-        else if(!b_isBoosting)
-        {
-
-            Quaternion newRotation = transform.rotation * Quaternion.Euler(y * -pitchAmount, 0f, -rollAmount * (x * normSpeed));
-            
-            chassisModel.rotation = Quaternion.Lerp(chassisModel.rotation, newRotation, Time.fixedDeltaTime * 10f);
-  
-
-        }
-
-
 
     }
 
@@ -500,7 +478,7 @@ public class WheelCast : MonoBehaviour
                 
 
 
-                if(b_hasHit[i] && !b_isBoosting)
+                if(b_hasHit[i])
                 {
                     
                     tmpbffr[i].z = 0.9619961f;
@@ -541,7 +519,7 @@ public class WheelCast : MonoBehaviour
                 
 
 
-                if(b_hasHit[i] && !b_isBoosting)
+                if(b_hasHit[i])
                 {
                     
                     tmpbffr[i].z = 0.9619961f;
@@ -571,20 +549,6 @@ public class WheelCast : MonoBehaviour
             }
 
          
-        }
-
-
-
-
-        if(Input.GetKeyDown(KeyCode.G))
-        {
-            Time.timeScale = 0.0f;
-            Time.fixedDeltaTime = Time.timeScale * 0.02f;
-        }
-
-        if(Input.GetKeyDown(KeyCode.H))
-        {
-            Time.timeScale = 1f;
         }
 
 
